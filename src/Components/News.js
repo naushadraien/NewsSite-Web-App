@@ -80,17 +80,22 @@ export class News extends Component {
 
   //updateNews() is used for update page by 1 or reduce page by 1
   async updateNews() {
+    //this.props.setProgress(0); for progress bar on the top of the navbar
+    this.props.setProgress(10);
     const url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=3f23f2c1c69349939e4ded1bd1717adb&page=${this.state.page}&pageSize=${this.props.pageSize}`;
     this.setState({ loading: true });
     //This is for fetch API and this is also a promise which can be resolved
     let data = await fetch(url);
+    this.props.setProgress(30);
     let parsedData = await data.json();
-    console.log(parsedData);
+    this.props.setProgress(70);
+    // console.log(parsedData);
     this.setState({
       articles: parsedData.articles,
       totalResults: parsedData.totalResults,
       loading: false,
     });
+    this.props.setProgress(100);
   }
   //componentDidMount() will run after running the render()
   //componentDidMount() is used for fetching of Api
