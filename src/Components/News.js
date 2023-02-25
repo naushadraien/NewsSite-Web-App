@@ -3,9 +3,11 @@ import Newitem from "./Newitem";
 import Spinner from "./Spinner";
 import PropTypes from "prop-types";
 import InfiniteScroll from "react-infinite-scroll-component";
+import axios from 'axios';
 
 //Converted News.js from class based to function based component
 const News = (props)=>{
+const [myData, setMyData] = useState([]);
   const [articles, setArticles] = useState([])
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(1)
@@ -18,13 +20,17 @@ const News = (props)=>{
   const updateNews = async ()=> {
       props.setProgress(10);
       const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.apiKey}&page=${page}&pageSize=${props.pageSize}`; 
+    //   const url = await axios.get(`https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.apiKey}&page=${page}&pageSize=${props.pageSize}`); 
       setLoading(true)
-      let data = await fetch(url);
+      let res = await axios.get(url);
       props.setProgress(30);
-      let parsedData = await data.json()
+    //   let parsedData = await data;
+        setMyData(res.data);
       props.setProgress(70);
-      setArticles(parsedData.articles)
-      setTotalResults(parsedData.totalResults)
+    //   setArticles(parsedData.articles)
+    //   setTotalResults(parsedData.totalResults)
+    setArticles(res.data.articles)
+    setTotalResults(res.data.totalResults)
       setLoading(false)
       props.setProgress(100);
 
@@ -39,11 +45,15 @@ const News = (props)=>{
   const fetchMoreData = async () => {   
     setLoading(true)
     const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.apiKey}&page=${page+1}&pageSize=${props.pageSize}`;
+    // const url = await axios.get(`https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.apiKey}&page=${page+1}&pageSize=${props.pageSize}`);
     setPage(page+1) 
-      let data = await fetch(url);
-      let parsedData = await data.json()
-      setArticles(articles.concat(parsedData.articles))
-      setTotalResults(parsedData.totalResults)
+      let res = await axios.get(url);
+      setMyData(res.data);
+    //   let parsedData = await data
+    // setArticles(articles.concat(parsedData.articles))
+    // setTotalResults(parsedData.totalResults)
+      setArticles(articles.concat(res.data.articles))
+      setTotalResults(res.data.totalResults)
       setLoading(false)
     };
 
